@@ -1,0 +1,25 @@
+---
+title: "BD"
+author: "Matías Barceló"
+date: "14 de agosto de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+
+```{r cargadatos}
+library(tidyverse)
+library(knitr)
+library(lubridate)
+library(dplyr)
+
+parks <- read_csv("parks.csv")
+species <- read_csv("species.csv")  %>% filter(Category == "Bird", Order == "Strigiformes") %>% select("Park Name", "Scientific Name", "Conservation Status")
+
+
+```
+
+Existen `r length(na.omit(species$Park Name))` bla

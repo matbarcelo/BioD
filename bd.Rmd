@@ -3,7 +3,7 @@ title: "Riqueza de Strigiformes en Parques Nacionales de EEUU"
 author: "Matías Barceló"
 output: 
     html_document:
-      fig_caption: true
+      fig_caption: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -19,13 +19,18 @@ library(dplyr)
 
 parks <- read_csv("parks.csv")
 species <- read_csv("species.csv")  %>% filter(Order == "Strigiformes")
+colnames(parks)[colnames(parks)=="Park Name"] <- "ParkName"
+colnames(species)[colnames(species)=="Park Name"] <- "ParkName"
+
 
 df2 <- full_join(parks, species) %>%  
-  select("Park Name", "Acres", "Family", "Scientific Name", "Conservation Status")
+  select("ParkName", "Acres", "Family", "Scientific Name", "Conservation Status")
 
-df <- df2 %>% group_by(`Park Name`) %>% summarise(N = n())
+df <- df2 %>% group_by(ParkName) %>% summarise(N = n())
 
-df3 <- df2 %>% filter(`Conservation Status`=="Threatened") %>% group_by(`Park Name`, `Scientific Name`) %>% count() %>% select(-n)
+df3 <- df2 %>% filter(`Conservation Status`=="Threatened") %>% group_by(ParkName, `Scientific Name`) %>% count() %>% select(-n)
+colnames(df3)[colnames(df3)=="Park Name"] <- "ParkName"
+
 
 plt<- full_join(df,df2)
 
@@ -33,14 +38,14 @@ plt<- full_join(df,df2)
 ```
 
 
-Los buhos (Strigiformes) son un grupo importante dentro de las redes tróficas. Son considerados depredadores topes, dado que se alimentanto tanto de aves como de roedores. Estas aves son muy sensibles al cambio de uso de suelo, por lo que es importante realizar medidas de conservación sobre ellas. 
+Los buhos (Strigiformes) son un grupo importante dentro de las redes tróficas. Son considerados depredadores topes, dado que se alimentan tanto de aves como de roedores. Estas aves son muy sensibles al cambio de uso de suelo, por lo que es importante realizar medidas de conservación sobre ellas. 
 
-Dentro de las acciones básicas en terminos de conservación de la biodiversidad, son la creación de áreas protegidas. Las áreas protegidas cumplen la funcion de disminuir las presiones humanas sobre las especies, por lo tanto la creación de áreas protegidas ayuda a conservar la biodiversidad.Actualmente, muchas especies se encuentran amenazadas dentro de los parques. En el caso de los búhos, solo *Strix occidentalis lucida* y *Strix occidentalis caurina* presentan esta categoría de amenaza. Estas especies se encuentran en diferentes parques nacionales (Tabla 1)
+Dentro de las acciones básicas en terminos de conservación de la biodiversidad, son la creación de áreas protegidas. Las áreas protegidas cumplen la funcion de disminuir las presiones humanas sobre las especies, por lo tanto la creación de áreas protegidas ayuda a conservar la biodiversidad.Actualmente, muchas especies se encuentran amenazadas dentro de los parques. En el caso de los búhos, solo *Strix occidentalis lucida* y *Strix occidentalis caurina* presentan la categoría de *amenazada*. Las especies de búhos que se encuentran en esta categoría, están presentes diferentes parques nacionales. De un total de `r length(parks$ParkName)` parques en EEUU, solo `r length(df3$ParkName)` albergan especies en la categoría mencionada (Tabla 1).
 
 
 
 ```{r tabla, echo=FALSE}
-df3 <- df2 %>% filter(`Conservation Status`=="Threatened") %>% group_by(`Park Name`, `Scientific Name`) %>% count() %>% select(-n)
+df3 <- df2 %>% filter(`Conservation Status`=="Threatened") %>% group_by(ParkName, `Scientific Name`) %>% count() %>% select(-n)
 kable(df3, caption = "Tabla 1. Especies presentes en Parques Nacionales que se encuentran bajo la categoría de Amenazadas")
 ```
 

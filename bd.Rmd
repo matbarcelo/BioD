@@ -1,6 +1,6 @@
 ---
 title: "Riqueza de Strigiformes en Parques Nacionales de EEUU"
-author: "Matías Barceló"
+author: "Matías Barceló C."
 output: 
     html_document:
       fig_caption: yes
